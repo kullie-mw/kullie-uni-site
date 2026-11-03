@@ -1,0 +1,666 @@
+#nadie-ai.section.active {
+    display: block;
+}
+
+.nadie-shell {
+    --nadie-bg: #f5f8fb;
+    --nadie-surface: #fff;
+    --nadie-text: #1d2f42;
+    --nadie-muted: #64788b;
+    --nadie-border: #dce5ed;
+    --nadie-accent: #1eaa91;
+    --nadie-accent-strong: #168873;
+    --nadie-assistant: #f1f7f8;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    min-height: min(780px, calc(100vh - 190px));
+    overflow: hidden;
+    color: var(--nadie-text);
+    background: var(--nadie-surface);
+    border: 1px solid var(--nadie-border);
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(28, 49, 68, 0.1);
+}
+
+.nadie-shell[data-theme="dark"] {
+    --nadie-bg: #15212b;
+    --nadie-surface: #1d2c37;
+    --nadie-text: #edf4f8;
+    --nadie-muted: #a7b7c2;
+    --nadie-border: #354956;
+    --nadie-accent: #4bd1b3;
+    --nadie-accent-strong: #37b99d;
+    --nadie-assistant: #263a45;
+}
+
+.nadie-shell button,
+.nadie-shell select,
+.nadie-shell textarea {
+    font: inherit;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
+.nadie-sidebar #nadieSidebarClose {
+    display: none;
+}
+
+.nadie-sidebar {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 14px;
+    padding: 18px 14px;
+    color: #edf4f8;
+    background: #243447;
+}
+
+.nadie-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 4px 10px;
+}
+
+.nadie-brand-mark {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    place-items: center;
+    color: #123b45;
+    background: #67dfc4;
+    border-radius: 13px;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.nadie-brand strong,
+.nadie-brand small {
+    display: block;
+}
+
+.nadie-brand strong {
+    letter-spacing: 0.04em;
+}
+
+.nadie-brand small {
+    margin-top: 3px;
+    color: #c2d1dc;
+    font-size: 0.75rem;
+}
+
+.nadie-sidebar button,
+.nadie-history-action {
+    border: 0;
+    cursor: pointer;
+}
+
+.nadie-new-chat {
+    width: 100%;
+    padding: 11px 12px;
+    color: #143b43;
+    background: #7de4ce;
+    border-radius: 10px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.nadie-new-chat:hover {
+    background: #a0efde;
+}
+
+.nadie-history-heading {
+    margin: 9px 5px 0;
+    color: #c2d1dc;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nadie-history {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+}
+
+.nadie-history-empty {
+    padding: 10px 6px;
+    color: #c2d1dc;
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.nadie-history-row {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 3px;
+    padding: 4px;
+    border-radius: 9px;
+}
+
+.nadie-history-row.active {
+    background: #3a5265;
+}
+
+.nadie-history-open {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    padding: 7px 5px;
+    color: #f3f7fa;
+    background: transparent;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nadie-history-action {
+    padding: 6px;
+    color: #d5e0e8;
+    background: transparent;
+    border-radius: 6px;
+}
+
+.nadie-history-action:hover,
+.nadie-history-open:hover {
+    background: rgba(255,255,255,0.12);
+}
+
+.nadie-sidebar-note {
+    margin: 0;
+    padding: 9px 5px 0;
+    color: #c2d1dc;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    font-size: 0.75rem;
+    line-height: 1.5;
+}
+
+.nadie-main {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    background: var(--nadie-bg);
+}
+
+.nadie-toolbar {
+    display: flex;
+    min-height: 70px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px;
+    background: var(--nadie-surface);
+    border-bottom: 1px solid var(--nadie-border);
+}
+
+.nadie-toolbar-leading,
+.nadie-toolbar-controls {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 10px;
+}
+
+.nadie-toolbar-title {
+    min-width: 0;
+}
+
+.nadie-toolbar-title strong,
+.nadie-toolbar-title span {
+    display: block;
+}
+
+.nadie-toolbar-title span {
+    margin-top: 3px;
+    color: var(--nadie-muted);
+    font-size: 0.78rem;
+}
+
+.nadie-course,
+.nadie-mode {
+    max-width: 235px;
+    min-width: 150px;
+    padding: 9px 11px;
+    color: var(--nadie-text);
+    background: var(--nadie-surface);
+    border: 1px solid var(--nadie-border);
+    border-radius: 9px;
+}
+
+.nadie-icon-button {
+    min-width: 40px;
+    padding: 9px 10px;
+    color: var(--nadie-text);
+    background: var(--nadie-surface);
+    border: 1px solid var(--nadie-border);
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.nadie-icon-button:hover {
+    border-color: var(--nadie-accent);
+}
+
+.nadie-status {
+    padding: 8px 20px 0;
+    color: var(--nadie-muted);
+    font-size: 0.82rem;
+}
+
+.nadie-status.error {
+    color: #b23c3c;
+}
+
+.nadie-conversation {
+    display: flex;
+    min-height: 250px;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    padding: 24px clamp(14px, 4vw, 46px);
+}
+
+.nadie-welcome {
+    width: min(680px, 100%);
+    margin: auto;
+    padding: 26px;
+    background: var(--nadie-surface);
+    border: 1px solid var(--nadie-border);
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgba(31, 57, 78, 0.06);
+}
+
+.nadie-welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--nadie-accent-strong);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nadie-welcome h2 {
+    margin: 14px 0 8px;
+    color: var(--nadie-text);
+}
+
+.nadie-welcome p {
+    margin: 0;
+    color: var(--nadie-muted);
+    line-height: 1.6;
+}
+
+.nadie-prompt-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 20px;
+}
+
+.nadie-prompt {
+    padding: 11px 12px;
+    color: var(--nadie-text);
+    background: var(--nadie-bg);
+    border: 1px solid var(--nadie-border);
+    border-radius: 10px;
+    cursor: pointer;
+    line-height: 1.4;
+    text-align: left;
+}
+
+.nadie-prompt:hover {
+    border-color: var(--nadie-accent);
+}
+
+.nadie-message {
+    width: min(790px, 100%);
+    align-self: center;
+    padding: 16px 18px;
+    color: var(--nadie-text);
+    background: var(--nadie-surface);
+    border: 1px solid var(--nadie-border);
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(31, 57, 78, 0.04);
+}
+
+.nadie-message.user {
+    background: color-mix(in srgb, var(--nadie-accent) 9%, var(--nadie-surface));
+    border-color: color-mix(in srgb, var(--nadie-accent) 36%, var(--nadie-border));
+}
+
+.nadie-message-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 9px;
+    color: var(--nadie-muted);
+    font-size: 0.78rem;
+}
+
+.nadie-message-header strong {
+    color: var(--nadie-text);
+}
+
+.nadie-message-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.nadie-message-actions button {
+    padding: 4px 7px;
+    color: var(--nadie-muted);
+    background: transparent;
+    border: 1px solid var(--nadie-border);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.nadie-message-actions button:hover {
+    color: var(--nadie-text);
+    border-color: var(--nadie-accent);
+}
+
+.nadie-message-body {
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+}
+
+.nadie-message-body p {
+    margin: 0 0 0.8em;
+}
+
+.nadie-message-body p:last-child {
+    margin-bottom: 0;
+}
+
+.nadie-message-body h1,
+.nadie-message-body h2,
+.nadie-message-body h3 {
+    margin: 1em 0 0.5em;
+    color: var(--nadie-text);
+}
+
+.nadie-message-body ul,
+.nadie-message-body ol {
+    padding-left: 1.5em;
+}
+
+.nadie-message-body pre {
+    overflow-x: auto;
+    padding: 13px;
+    color: #f2f6f9;
+    background: #1e2d38;
+    border-radius: 9px;
+}
+
+.nadie-message-body code {
+    padding: 0.1em 0.35em;
+    background: color-mix(in srgb, var(--nadie-border) 55%, transparent);
+    border-radius: 4px;
+}
+
+.nadie-message-body pre code {
+    padding: 0;
+    background: transparent;
+}
+
+.nadie-message-body blockquote {
+    margin: 10px 0;
+    padding: 5px 14px;
+    color: var(--nadie-muted);
+    border-left: 3px solid var(--nadie-accent);
+}
+
+.nadie-table-wrap {
+    overflow-x: auto;
+}
+
+.nadie-message-body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nadie-message-body th,
+.nadie-message-body td {
+    padding: 8px;
+    border: 1px solid var(--nadie-border);
+    text-align: left;
+}
+
+.nadie-message-body th {
+    background: var(--nadie-bg);
+}
+
+.nadie-sources {
+    margin-top: 12px;
+    padding-top: 10px;
+    color: var(--nadie-muted);
+    border-top: 1px solid var(--nadie-border);
+    font-size: 0.78rem;
+}
+
+.nadie-sources strong {
+    color: var(--nadie-text);
+}
+
+.nadie-message.pending .nadie-message-body {
+    color: var(--nadie-muted);
+}
+
+.nadie-dots {
+    display: inline-flex;
+    gap: 4px;
+    margin-left: 4px;
+}
+
+.nadie-dots i {
+    width: 6px;
+    height: 6px;
+    background: var(--nadie-accent);
+    border-radius: 50%;
+    animation: nadie-pulse 1.1s infinite ease-in-out;
+}
+
+.nadie-dots i:nth-child(2) { animation-delay: 0.14s; }
+.nadie-dots i:nth-child(3) { animation-delay: 0.28s; }
+
+@keyframes nadie-pulse {
+    0%, 60%, 100% { opacity: 0.35; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-4px); }
+}
+
+.nadie-composer-wrap {
+    padding: 12px clamp(12px, 4vw, 42px) 18px;
+}
+
+.nadie-composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    width: min(820px, 100%);
+    margin: 0 auto;
+    padding: 9px;
+    background: var(--nadie-surface);
+    border: 1px solid var(--nadie-border);
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(31, 57, 78, 0.06);
+}
+
+.nadie-composer textarea {
+    width: 100%;
+    min-height: 46px;
+    max-height: 160px;
+    resize: vertical;
+    padding: 12px 10px;
+    color: var(--nadie-text);
+    background: transparent;
+    border: 0;
+    outline: none;
+}
+
+.nadie-send {
+    min-width: 78px;
+    padding: 11px 14px;
+    color: #fff;
+    background: #168873;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.nadie-send:hover:not(:disabled) {
+    background: #116f5e;
+}
+
+.nadie-send:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.nadie-disclaimer {
+    margin: 8px auto 0;
+    color: var(--nadie-muted);
+    font-size: 0.72rem;
+    text-align: center;
+}
+
+.nadie-mobile-menu {
+    display: inline-block;
+}
+
+.nadie-sidebar-collapsed {
+    grid-template-columns: 78px minmax(0, 1fr);
+}
+
+.nadie-sidebar-collapsed .nadie-sidebar {
+    align-items: center;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.nadie-sidebar-collapsed .nadie-brand > div:last-child,
+.nadie-sidebar-collapsed .nadie-history-heading,
+.nadie-sidebar-collapsed .nadie-history,
+.nadie-sidebar-collapsed .nadie-sidebar-note {
+    display: none;
+}
+
+.nadie-sidebar-collapsed .nadie-new-chat {
+    width: 46px;
+    height: 46px;
+    overflow: hidden;
+    padding: 0;
+    font-size: 0;
+    text-align: center;
+}
+
+.nadie-sidebar-collapsed .nadie-new-chat::first-letter {
+    font-size: 21px;
+}
+
+@media (max-width: 760px) {
+    .nadie-shell {
+        position: relative;
+        grid-template-columns: minmax(0, 1fr);
+        min-height: min(820px, calc(100vh - 150px));
+    }
+
+    .nadie-sidebar {
+        position: absolute;
+        z-index: 3;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: min(310px, 86vw);
+        box-shadow: 12px 0 30px rgba(0,0,0,0.22);
+        transform: translateX(-110%);
+        transition: transform 0.2s ease;
+    }
+
+    .nadie-shell.mobile-sidebar-open .nadie-sidebar {
+        transform: translateX(0);
+    }
+
+    .nadie-mobile-menu {
+        display: inline-block;
+    }
+
+    .nadie-sidebar #nadieSidebarClose {
+        display: inline-block;
+    }
+
+    .nadie-toolbar {
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .nadie-toolbar-controls {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 6px;
+    }
+
+    .nadie-course,
+    .nadie-mode {
+        max-width: 155px;
+        min-width: 0;
+        padding: 8px;
+        font-size: 0.8rem !important;
+    }
+
+    .nadie-toolbar-title span {
+        display: none;
+    }
+
+    .nadie-prompt-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nadie-message {
+        padding: 13px;
+    }
+}
+
+@media (max-width: 430px) {
+    .nadie-toolbar-title {
+        display: none;
+    }
+
+    .nadie-course,
+    .nadie-mode {
+        max-width: 135px;
+        font-size: 0.74rem !important;
+    }
+
+    .nadie-welcome {
+        padding: 18px;
+    }
+
+    .nadie-composer {
+        gap: 5px;
+        padding: 6px;
+    }
+
+    .nadie-send {
+        min-width: 62px;
+        padding: 10px;
+    }
+}

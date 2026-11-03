@@ -1,0 +1,51 @@
+[
+  {
+    "id": "sta111",
+    "code": "STA111",
+    "name": "Introductory Statistics",
+    "units": [
+      { "title": "Unit 1: Data and Statistics", "file": "sta111-unit1-data.js", "variable": "sta111Unit1Markdown" },
+      { "title": "Unit 2: Data Collection", "file": "sta111-unit2-data.js", "variable": "sta111Unit2Markdown" },
+      { "title": "Unit 3: Quality Assurance in Statistics", "file": "sta111-unit3-data.js", "variable": "sta111Unit3Markdown" }
+    ]
+  },
+  {
+    "id": "asc111",
+    "code": "ASC111",
+    "name": "Introduction to Actuarial Science",
+    "units": [
+      { "title": "Unit 1: The Actuarial Profession", "file": "asc111-unit1-data.js", "variable": "asc111Unit1Markdown" },
+      { "title": "Unit 2: History of the Actuarial Profession", "file": "asc111-unit2-data.js", "variable": "asc111Unit2Markdown" },
+      { "title": "Unit 3: Basic Principles and Terminology", "file": "asc111-unit3-data.js", "variable": "asc111Unit3Markdown" },
+      { "title": "Unit 4: Economics of Risk", "file": "asc111-unit4-data.js", "variable": "asc111Unit4Markdown" },
+      { "title": "Unit 5: Random Variables", "file": "asc111-unit5-data.js", "variable": "asc111Unit5Markdown" },
+      { "title": "Unit 6: Time Value of Money", "file": "asc111-unit6-data.js", "variable": "asc111Unit6Markdown" }
+    ]
+  },
+  {
+    "id": "dis113",
+    "code": "DIS113/COM111",
+    "name": "Introduction to Computer Science and Applications",
+    "units": [
+      { "title": "Unit 1: Introduction to ICT", "file": "dis113-unit1-data.js", "variable": "dis113Unit1Markdown" },
+      { "title": "Unit 2: Software — Systems and Applications", "file": "dis113-unit2-data.js", "variable": "dis113Unit2Markdown" },
+      { "title": "Unit 3: Personal and Mobile Technologies", "file": "dis113-unit3-data.js", "variable": "dis113Unit3Markdown" },
+      { "title": "Unit 4: The Internet and World Wide Web", "file": "dis113-unit4-data.js", "variable": "dis113Unit4Markdown" },
+      { "title": "Unit 5: Information Systems", "file": "dis113-unit5-data.js", "variable": "dis113Unit5Markdown" },
+      { "title": "Unit 6: Databases I", "file": "dis113-unit6-data.js", "variable": "dis113Unit6Markdown" },
+      { "title": "Unit 7: Databases II", "file": "dis113-unit7-data.js", "variable": "dis113Unit7Markdown" }
+    ]
+  },
+  {
+    "id": "mat111",
+    "code": "MAT111",
+    "name": "College Algebra",
+    "units": []
+  },
+  {
+    "id": "lan112",
+    "code": "LAN112",
+    "name": "Academic Language and Communication Skills",
+    "units": []
+  }
+]

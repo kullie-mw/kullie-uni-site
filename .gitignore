@@ -1,0 +1,5 @@
+node_modules/
+nadie-ai/.env
+nadie-ai/.env.*
+!nadie-ai/.env.example
+npm-debug.log*
