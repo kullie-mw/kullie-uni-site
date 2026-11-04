@@ -5,6 +5,10 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # GROQ_BASE_URL and HOST are non-secret configuration values (a public API
+  # endpoint and a bind address) that legitimately appear in source/docs.
+  # GROQ_API_KEY remains protected by secrets scanning.
+  SECRETS_SCAN_OMIT_KEYS = "GROQ_BASE_URL,HOST"
 
 [functions]
   node_bundler = "esbuild"

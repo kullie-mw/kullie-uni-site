@@ -1,6 +1,9 @@
-const config = require('../../nadie-ai/config');
-const { getCourseList, retrieveRelevantMaterials } = require('../../nadie-ai/services/knowledgeService');
-const { generateResponse } = require('../../nadie-ai/services/aiService');
+import config from '../../nadie-ai/config.js';
+import knowledgeService from '../../nadie-ai/services/knowledgeService.js';
+import aiService from '../../nadie-ai/services/aiService.js';
+
+const { getCourseList, retrieveRelevantMaterials } = knowledgeService;
+const { generateResponse } = aiService;
 
 const allowedModes = new Set(['learn', 'revision', 'practice', 'exam', 'steps', 'general']);
 const maximumRequestBytes = 20 * 1024;
@@ -9,11 +12,10 @@ const rateLimitMaximum = 30;
 const rateLimitBuckets = new Map();
 
 function jsonResponse(statusCode, payload) {
-    return {
-        statusCode,
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify(payload)
-    };
+    return new Response(JSON.stringify(payload), {
+        status: statusCode,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    });
 }
 
 function isRateLimited(ipAddress) {
@@ -55,19 +57,20 @@ function errorResponse(error) {
     return jsonResponse(500, { error: 'NADIE AI could not complete that request. Please try again.' });
 }
 
-async function handleChat(event) {
-    const ipAddress = event.headers?.['x-nf-client-connection-ip'] || 'unknown';
+async function handleChat(request, context) {
+    const ipAddress = context?.ip || request.headers.get('x-nf-client-connection-ip') || 'unknown';
     if (isRateLimited(ipAddress)) {
         return jsonResponse(429, { error: 'You have sent several messages recently. Please wait a few minutes and try again.' });
     }
 
-    if (typeof event.body !== 'string' || Buffer.byteLength(event.body, 'utf8') > maximumRequestBytes) {
+    const rawBody = await request.text();
+    if (typeof rawBody !== 'string' || Buffer.byteLength(rawBody, 'utf8') > maximumRequestBytes) {
         return jsonResponse(413, { error: 'The request is too large.' });
     }
 
     let body;
     try {
-        body = JSON.parse(event.body);
+        body = JSON.parse(rawBody);
     } catch {
         return jsonResponse(400, { error: 'The request body must be valid JSON.' });
     }
@@ -119,11 +122,11 @@ async function handleChat(event) {
     });
 }
 
-exports.handler = async event => {
+export default async (request, context) => {
     try {
-        const requestPath = new URL(event.rawUrl || event.path, 'https://netlify.local').pathname;
+        const requestPath = new URL(request.url).pathname;
         if (requestPath.endsWith('/api/health') || requestPath.endsWith('/health')) {
-            if (event.httpMethod !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
+            if (request.method !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
             return jsonResponse(200, {
                 status: 'ok',
                 aiConfigured: Boolean(config.aiApiKey),
@@ -132,12 +135,12 @@ exports.handler = async event => {
             });
         }
         if (requestPath.endsWith('/api/courses') || requestPath.endsWith('/courses')) {
-            if (event.httpMethod !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
+            if (request.method !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
             return jsonResponse(200, { courses: await getCourseList() });
         }
         if (requestPath.endsWith('/api/chat') || requestPath.endsWith('/chat')) {
-            if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'Method not allowed.' });
-            return await handleChat(event);
+            if (request.method !== 'POST') return jsonResponse(405, { error: 'Method not allowed.' });
+            return await handleChat(request, context);
         }
         return jsonResponse(404, { error: 'Not found.' });
     } catch (error) {
