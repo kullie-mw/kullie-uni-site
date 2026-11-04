@@ -41,7 +41,7 @@ function createSystemPrompt({ course, mode, knowledge }) {
 
 async function generateResponse({ messages, course, mode, knowledge }) {
     if (!config.aiApiKey) {
-        const error = new Error('NADIE AI needs an API key. Add OPENAI_API_KEY or GROQ_API_KEY to nadie-ai/.env, then restart the server.');
+        const error = new Error('NADIE AI needs an API key. For local use, add OPENAI_API_KEY or GROQ_API_KEY to nadie-ai/.env and restart the server. On Netlify, make sure AI features (AI Gateway) are enabled for the project.');
         error.status = 503;
         error.code = 'api_key_missing';
         throw error;
