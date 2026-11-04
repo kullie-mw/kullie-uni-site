@@ -8,18 +8,3 @@
 
 [functions]
   node_bundler = "esbuild"
-
-[[redirects]]
-  from = "/api/health"
-  to = "/.netlify/functions/api/health"
-  status = 200
-
-[[redirects]]
-  from = "/api/courses"
-  to = "/.netlify/functions/api/courses"
-  status = 200
-
-[[redirects]]
-  from = "/api/chat"
-  to = "/.netlify/functions/api/chat"
-  status = 200

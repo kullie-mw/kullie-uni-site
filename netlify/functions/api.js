@@ -1,6 +1,9 @@
-const config = require('../../nadie-ai/config');
-const { getCourseList, retrieveRelevantMaterials } = require('../../nadie-ai/services/knowledgeService');
-const { generateResponse } = require('../../nadie-ai/services/aiService');
+import nadieConfig from '../../nadie-ai/config.js';
+import knowledgeService from '../../nadie-ai/services/knowledgeService.js';
+import aiService from '../../nadie-ai/services/aiService.js';
+
+const { getCourseList, retrieveRelevantMaterials } = knowledgeService;
+const { generateResponse } = aiService;
 
 const allowedModes = new Set(['learn', 'revision', 'practice', 'exam', 'steps', 'general']);
 const maximumRequestBytes = 20 * 1024;
@@ -9,11 +12,10 @@ const rateLimitMaximum = 30;
 const rateLimitBuckets = new Map();
 
 function jsonResponse(statusCode, payload) {
-    return {
-        statusCode,
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-        body: JSON.stringify(payload)
-    };
+    return new Response(JSON.stringify(payload), {
+        status: statusCode,
+        headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    });
 }
 
 function isRateLimited(ipAddress) {
@@ -38,14 +40,14 @@ function errorResponse(error) {
         return jsonResponse(503, { error: error.message });
     }
     if (error.status === 401) {
-        const keyName = config.aiProvider === 'groq' ? 'GROQ_API_KEY' : 'OPENAI_API_KEY';
-        return jsonResponse(502, { error: `The ${config.aiProviderName} API key was rejected. Check the ${keyName} environment variable in Netlify.` });
+        const keyName = nadieConfig.aiProvider === 'groq' ? 'GROQ_API_KEY' : 'OPENAI_API_KEY';
+        return jsonResponse(502, { error: `The ${nadieConfig.aiProviderName} API key was rejected. Check the ${keyName} environment variable in Netlify.` });
     }
     if (error.status === 429) {
-        return jsonResponse(503, { error: `${config.aiProviderName} is rate-limited or the project has reached its API quota. Check your ${config.aiProviderName} project and try again later.` });
+        return jsonResponse(503, { error: `${nadieConfig.aiProviderName} is rate-limited or the project has reached its API quota. Check your ${nadieConfig.aiProviderName} project and try again later.` });
     }
     if (error.status === 400 || error.status === 404) {
-        return jsonResponse(502, { error: `The selected model or request is not supported by ${config.aiProviderName}. Check the OPENAI_MODEL environment variable in Netlify.` });
+        return jsonResponse(502, { error: `The selected model or request is not supported by ${nadieConfig.aiProviderName}. Check the OPENAI_MODEL environment variable in Netlify.` });
     }
     if (error.name === 'APIConnectionTimeoutError' || error.name === 'APIConnectionError') {
         return jsonResponse(503, { error: 'NADIE AI could not reach the AI service. Check the provider status and try again.' });
@@ -55,26 +57,27 @@ function errorResponse(error) {
     return jsonResponse(500, { error: 'NADIE AI could not complete that request. Please try again.' });
 }
 
-async function handleChat(event) {
-    const ipAddress = event.headers?.['x-nf-client-connection-ip'] || 'unknown';
+async function handleChat(req, context) {
+    const ipAddress = context?.ip || req.headers.get('x-nf-client-connection-ip') || 'unknown';
     if (isRateLimited(ipAddress)) {
         return jsonResponse(429, { error: 'You have sent several messages recently. Please wait a few minutes and try again.' });
     }
 
-    if (typeof event.body !== 'string' || Buffer.byteLength(event.body, 'utf8') > maximumRequestBytes) {
+    const rawBody = await req.text();
+    if (Buffer.byteLength(rawBody, 'utf8') > maximumRequestBytes) {
         return jsonResponse(413, { error: 'The request is too large.' });
     }
 
     let body;
     try {
-        body = JSON.parse(event.body);
+        body = JSON.parse(rawBody);
     } catch {
         return jsonResponse(400, { error: 'The request body must be valid JSON.' });
     }
 
     const { messages, courseId = 'general', mode = 'learn' } = body || {};
-    if (!Array.isArray(messages) || messages.length === 0 || messages.length > config.maximumConversationMessages) {
-        return jsonResponse(400, { error: `Send between 1 and ${config.maximumConversationMessages} recent messages.` });
+    if (!Array.isArray(messages) || messages.length === 0 || messages.length > nadieConfig.maximumConversationMessages) {
+        return jsonResponse(400, { error: `Send between 1 and ${nadieConfig.maximumConversationMessages} recent messages.` });
     }
     if (!allowedModes.has(mode)) {
         return jsonResponse(400, { error: 'Choose one of the available study modes.' });
@@ -89,13 +92,13 @@ async function handleChat(event) {
         if (!message || !['user', 'assistant'].includes(message.role) || typeof message.content !== 'string' || !message.content.trim()) {
             return jsonResponse(400, { error: 'Each message needs a valid role and non-empty text.' });
         }
-        if (message.content.length > config.maximumMessageCharacters) {
-            return jsonResponse(400, { error: `Each message must be ${config.maximumMessageCharacters} characters or fewer.` });
+        if (message.content.length > nadieConfig.maximumMessageCharacters) {
+            return jsonResponse(400, { error: `Each message must be ${nadieConfig.maximumMessageCharacters} characters or fewer.` });
         }
         totalCharacters += message.content.length;
         validatedMessages.push({ role: message.role, content: message.content.trim() });
     }
-    if (totalCharacters > config.maximumRequestCharacters) {
+    if (totalCharacters > nadieConfig.maximumRequestCharacters) {
         return jsonResponse(400, { error: 'This conversation is too long to send at once. Start a new chat or shorten your message.' });
     }
     if (validatedMessages[validatedMessages.length - 1].role !== 'user') {
@@ -114,33 +117,37 @@ async function handleChat(event) {
         answer,
         sources: knowledge.sources,
         courseMaterialsAvailable: knowledge.available,
-        provider: config.aiProviderName,
-        model: config.aiModel
+        provider: nadieConfig.aiProviderName,
+        model: nadieConfig.aiModel
     });
 }
 
-exports.handler = async event => {
+export default async (req, context) => {
     try {
-        const requestPath = new URL(event.rawUrl || event.path, 'https://netlify.local').pathname;
+        const requestPath = new URL(req.url).pathname;
         if (requestPath.endsWith('/api/health') || requestPath.endsWith('/health')) {
-            if (event.httpMethod !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
+            if (req.method !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
             return jsonResponse(200, {
                 status: 'ok',
-                aiConfigured: Boolean(config.aiApiKey),
-                provider: config.aiProviderName,
-                model: config.aiModel
+                aiConfigured: Boolean(nadieConfig.aiApiKey),
+                provider: nadieConfig.aiProviderName,
+                model: nadieConfig.aiModel
             });
         }
         if (requestPath.endsWith('/api/courses') || requestPath.endsWith('/courses')) {
-            if (event.httpMethod !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
+            if (req.method !== 'GET') return jsonResponse(405, { error: 'Method not allowed.' });
             return jsonResponse(200, { courses: await getCourseList() });
         }
         if (requestPath.endsWith('/api/chat') || requestPath.endsWith('/chat')) {
-            if (event.httpMethod !== 'POST') return jsonResponse(405, { error: 'Method not allowed.' });
-            return await handleChat(event);
+            if (req.method !== 'POST') return jsonResponse(405, { error: 'Method not allowed.' });
+            return await handleChat(req, context);
         }
         return jsonResponse(404, { error: 'Not found.' });
     } catch (error) {
         return errorResponse(error);
     }
+};
+
+export const config = {
+    path: ['/api/health', '/api/courses', '/api/chat']
 };
